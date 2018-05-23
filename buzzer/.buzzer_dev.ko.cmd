@@ -1,0 +1,1 @@
+cmd_/home/pi/smartDogWear/buzzer/buzzer_dev.ko := ld -EL -r  -T ./scripts/module-common.lds --build-id  -o /home/pi/smartDogWear/buzzer/buzzer_dev.ko /home/pi/smartDogWear/buzzer/buzzer_dev.o /home/pi/smartDogWear/buzzer/buzzer_dev.mod.o ;  true
