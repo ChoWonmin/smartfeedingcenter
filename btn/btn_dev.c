@@ -4,7 +4,7 @@
 #include <linux/delay.h>
 #include <linux/fs.h>
 
-#define GPIO1 18
+#define GPIO1 4
 #define DEV_NAME "btn_dev"
 #define DEV_NUM 240
 
@@ -12,20 +12,23 @@ MODULE_LICENSE("GPL");
 
 int btn_scan(struct inode *pinode, struct file *pfile){
 
-	int res = -1;
-	printk(KERN_ALERT "open btn_dev\n");
+  int res = -1;
+  printk(KERN_ALERT "open btn_dev\n");
 	
-	gpio_request(GPIO1, "GPIO1");
+  gpio_request(GPIO1, "GPIO1");
     
-    gpio_direction_input(GPIO1);
-	while(1) {
-    	res = gpio_get_value(GPIO1);
-    	if(!res)
-  			printk(KERN_DEBUG "===== %d =====\n", res);
-    } 
+  gpio_direction_input(GPIO1);
 
-	return 0;
+  while(1) {
+    res = gpio_get_value(GPIO1);
+    if(!res){
+      printk(KERN_DEBUG "===== %d =====\n", res);
+      break;
+    }
+    
+  } 
 
+  return 0;
 }
 struct file_operations fop = {
 	.owner = THIS_MODULE,
@@ -44,3 +47,4 @@ void __exit btn_exit(void) {
 
 module_init(btn_init);
 module_exit(btn_exit);
+
