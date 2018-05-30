@@ -11,7 +11,11 @@ cre_file :
 clean:  
 	find . -type f | xargs touch
 	rm -rf $(OBJS)  
-	rm -rf btn_dev.ko
 	rm -rf btn_dev.mod.c
 	rm -rf btn_dev.o   
 	rm -rf btn_dev.mod.o
+	rm -rf Module.symvers
+	rm -rf modules.order
+
+wiringPi:
+	gcc -Wall -o btn_wiring  btn.c -lwiringPi

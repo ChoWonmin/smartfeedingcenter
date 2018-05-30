@@ -8,17 +8,25 @@
 #define DEV_PATH "/dev/btn_dev"
 
 int main(int argc, char *argv[]) {
-    int fd = 0;
-    
+  int fd, input = 0;
+
+  while(1) {
     if((fd = open(DEV_PATH, O_RDWR | O_NONBLOCK)) < 0) {
-        perror("open()");
-        exit(1);
+      perror("open()");
+      exit(1);
     }
+
+    printf("clicked!!!!!\n");
     
-    printf("open successs!");
-    sleep(2);
+    printf("continue??? 0 or anything :: ");
+    scanf(" %d", &input);
     
+    if(input==0)
+	break;    
+
     close(fd);
-    
-    return 0;
+
+  }
+
+  return 0;
 }
