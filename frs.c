@@ -9,11 +9,11 @@ int main(){
         wiringPiSetup();
         mcp3004Setup(300,0);
  
-        for(;;)
+        while(1)
         {
                 val = analogRead(300);
  
-                printf("ch1:%d\n",val);
+                printf("%d\n",val);
                 delay(500);
  
         }
