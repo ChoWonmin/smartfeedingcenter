@@ -14,7 +14,7 @@ int buzzer_open(struct inode *pinode, struct file *pfile) {
 	// At first, buzzer is initialized that it is shut down.
 	printk(KERN_ALERT "OPEN buzzer_dev\n");
 	gpio_request(GPIO1, "GPIO1");
-	gpio_direction_output(GPIO1, 1);
+	gpio_direction_output(GPIO1, 0);
 	return 0;
 }
 
@@ -24,9 +24,16 @@ int buzzer_close(struct inode *pinode, struct file *pfile) {
 	return 0;
 }
 
+ssize_t buzzer_write(struct file *pfile, const char __user *buffer, size_t length, loff_t *offset)
+{
+	printk(KERN_ALERT "write success\n");
+	return length;
+}
+
 struct file_operations fop = {
 	.owner = THIS_MODULE,
 	.open = buzzer_open,
+	.write = buzzer_write,
 	.release = buzzer_close,
 };
 
