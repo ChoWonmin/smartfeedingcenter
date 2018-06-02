@@ -67,7 +67,6 @@ int main( int argc, char** argv) {
 		sleep(60);
 	}
 
-	close(fd);
 	free(breakfast);
 	free(lunch);
 	free(dinner);
@@ -77,11 +76,23 @@ int main( int argc, char** argv) {
 // method that buzzer work
 void buzzerWork()
 {
+	int fd, ret;
+	char* message = "buzz";
 	/* O_NONBLOCK : when opening a FIFO with O_RDONLY or O_WRONLY set */
 	if((fd = open(DEV_PATH, O_RDWR | O_NONBLOCK)) < 0) {
-		perror("open\n");
+		printf("failed to open device file\n");
 		exit(1);
 	}
 
+	// write "buzz" to device file for working buzzer
+	ret = write(fd, message, strlen(message));
+	if(ret < 0)
+	{
+		printf("Failed to write the message to the device\n");
+		exit(1);
+	}
+
+
 	printf("open success\n");
+	close(fd);
 }
