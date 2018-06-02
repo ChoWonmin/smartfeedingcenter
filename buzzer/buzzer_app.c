@@ -20,15 +20,15 @@ int main( int argc, char** argv) {
 	char* dinner;
 	
 	// receivce breakfast, lunch, dinner from user
-	if( argc != 4)
+	if(argc != 4)
 	{
 		printf("insufficient input\n");	
 		exit(1);
 	}
 	
-	breakfast = malloc(sizeof(char) * strlen(argv[1]));
-	lunch = malloc(sizeof(char) * strlen(argv[2]));
-	dinner = malloc(sizeof(char) * strlen(argv[3]));
+	breakfast = (char*)malloc(sizeof(char) * strlen(argv[1]));
+	lunch = (char*)malloc(sizeof(char) * strlen(argv[2]));
+	dinner = (char*)malloc(sizeof(char) * strlen(argv[3]));
 
 	strcpy(breakfast, argv[1]);
 	strcpy(lunch, argv[2]);
@@ -77,21 +77,20 @@ int main( int argc, char** argv) {
 void buzzerWork()
 {
 	int fd, ret;
-	char* message = "buzz";
+	char message[5] = "buzz";
 	/* O_NONBLOCK : when opening a FIFO with O_RDONLY or O_WRONLY set */
 	if((fd = open(DEV_PATH, O_RDWR | O_NONBLOCK)) < 0) {
 		printf("failed to open device file\n");
 		exit(1);
 	}
 
-	// write "buzz" to device file for working buzzer
-	ret = write(fd, message, strlen(message));
+	//write "buzz" to device file for working buzzer
+	ret = write(fd, message, (strlen(message)+1));
 	if(ret < 0)
 	{
 		printf("Failed to write the message to the device\n");
 		exit(1);
 	}
-
 
 	printf("open success\n");
 	close(fd);
