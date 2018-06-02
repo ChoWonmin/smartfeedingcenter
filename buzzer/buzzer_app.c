@@ -10,6 +10,8 @@
 #define CHARMAX 100
 #define DEV_PATH "/dev/buzzer_dev"
 
+void buzzerWork();
+
 int main( int argc, char** argv) {
 
 	char cur_time[CHARMAX]; // current system time
@@ -46,26 +48,24 @@ int main( int argc, char** argv) {
 		if(strcmp(cur_time, breakfast) == 0) // when breakfast is comming
 		{
 			puts("breakfase buzzer!\n");
-			// buzzer work
+			buzzerWork();
 			break;
 		}
 		else if(strcmp(cur_time, lunch) == 0)// when lunch is comming
 		{
 			puts("lunch buzzer\n");
-			// buzzer work
+			buzzerWork();
 			break;
 		}
 		else if(strcmp(cur_time, dinner) == 0) // when dinner is comming
 		{
 			puts("dinner buzzer\n");
-			// buzzer work
+			buzzerWork();
 			break;
 		}
 	
 		sleep(60);
 	}
-
-	printf("open success\n");
 
 	close(fd);
 	free(breakfast);
@@ -83,4 +83,5 @@ void buzzerWork()
 		exit(1);
 	}
 
+	printf("open success\n");
 }

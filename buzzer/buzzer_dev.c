@@ -11,9 +11,10 @@
 MODULE_LICENSE("GPL");
 
 int buzzer_open(struct inode *pinode, struct file *pfile) {
+	// At first, buzzer is initialized that it is shut down.
 	printk(KERN_ALERT "OPEN buzzer_dev\n");
 	gpio_request(GPIO1, "GPIO1");
-	gpio_direction_output(GPIO1, 0);
+	gpio_direction_output(GPIO1, 1);
 	return 0;
 }
 
