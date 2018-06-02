@@ -9,14 +9,13 @@
 
 #define CHARMAX 100
 #define DEV_PATH "/dev/buzzer_dev"
-#define BREAKFAST "09:00"
-#define LUNCH "12:00"
-#define DINNER "19:00"
 
 int main( int argc, char** argv) {
 
-	int fd = 0;
 	char cur_time[CHARMAX]; // current system time
+	char* breakfast;
+	char* lunch;
+	char* dinner;
 	
 	// receivce breakfast, lunch, dinner from user
 	if( argc != 4)
@@ -24,6 +23,14 @@ int main( int argc, char** argv) {
 		printf("insufficient input\n");	
 		exit(1);
 	}
+	
+	breakfast = malloc(sizeof(char) * strlen(argv[1]));
+	lunch = malloc(sizeof(char) * strlen(argv[2]));
+	dinner = malloc(sizeof(char) * strlen(argv[3]));
+
+	strcpy(breakfast, argv[1]);
+	strcpy(lunch, argv[2]);
+	strcpy(dinner, argv[3]);
 
 	// get system time 
 	// check that system time is coincides with each user input every minute
@@ -36,35 +43,44 @@ int main( int argc, char** argv) {
 
 		printf("current time: %s\n", cur_time);
 		
-		if(strcmp(cur_time, BREAKFAST) == 0) // when breakfast is comming
+		if(strcmp(cur_time, breakfast) == 0) // when breakfast is comming
 		{
 			puts("breakfase buzzer!\n");
+			// buzzer work
 			break;
 		}
-		else if(strcmp(cur_time, LUNCH) == 0)// when lunch is comming
+		else if(strcmp(cur_time, lunch) == 0)// when lunch is comming
 		{
 			puts("lunch buzzer\n");
+			// buzzer work
 			break;
 		}
-		else // when dinner is comming
+		else if(strcmp(cur_time, dinner) == 0) // when dinner is comming
 		{
 			puts("dinner buzzer\n");
+			// buzzer work
 			break;
 		}
 	
-		// lunch
-		// dinner
 		sleep(60);
 	}
 
-	/* O_NONBLOCK : when opening a FIFO with O_RDONLY or O_WRONLY set */
-	//if((fd = open(DEV_PATH, O_RDWR | O_NONBLOCK)) < 0) {
-		//perror("open\n");
-		//exit(1);
-	//}
+	printf("open success\n");
 
-	//printf("open success\n");
-
-	//close(fd);
+	close(fd);
+	free(breakfast);
+	free(lunch);
+	free(dinner);
 	return 0;
+}
+
+// method that buzzer work
+void buzzerWork()
+{
+	/* O_NONBLOCK : when opening a FIFO with O_RDONLY or O_WRONLY set */
+	if((fd = open(DEV_PATH, O_RDWR | O_NONBLOCK)) < 0) {
+		perror("open\n");
+		exit(1);
+	}
+
 }
