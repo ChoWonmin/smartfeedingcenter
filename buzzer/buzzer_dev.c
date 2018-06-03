@@ -4,6 +4,7 @@
 #include <linux/delay.h>
 #include <linux/fs.h>
 #include <linux/uaccess.h>
+#include <linux/timer.h>
 
 #define GPIO1 18
 #define DEV_NAME "buzzer_dev"
@@ -29,12 +30,23 @@ ssize_t buzzer_write(struct file *pfile, const char __user *buffer, size_t lengt
 {
 	char msg[5];
 	int err;
+	// receive message from user program
 	if((err = copy_from_user(msg, buffer, length)) < 0)
 	{
 		printk(KERN_ALERT "failed to write\n");
 		return -1;
 	}
-	printk(KERN_DEBUG "msg = %s\n", msg);
+
+	if(strcmp(msg, "buzz") == 0)
+	{
+		gpio_direction_output(GPIO1, 1);
+		ssleep(1);
+		gpio_direction_output(GPIO1, 0);
+		ssleep(1);
+		gpio_direction_output(GPIO1, 1);
+		ssleep(1);
+		gpio_direction_output(GPIO1, 0);
+	}
 
 	return length;
 }
