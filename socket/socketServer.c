@@ -18,7 +18,7 @@ int main(void) {
 	struct sockaddr_in client_addr;
 
 	char buff_rcv[BUFF_SIZE+5];
-	char buff_snd[BUFF_SIZE-5];
+	char buff_snd[BUFF_SIZE+5] = "get";
 
 	/*
 	 * socket(int domain, int type, int protocol) 
@@ -74,7 +74,10 @@ int main(void) {
 		}
 
 		printf("accept client\n");
-	
+
+		write(client_socket, buff_snd, strlen(buff_snd) + 1);
+
+		puts("write success\n");
 	}
 
 }

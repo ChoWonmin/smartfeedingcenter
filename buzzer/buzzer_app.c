@@ -48,18 +48,21 @@ int main( int argc, char** argv) {
 		if(strcmp(cur_time, breakfast) == 0) // when breakfast is comming
 		{
 			puts("breakfast buzzer!\n");
+			// Before buzzer work, receive the data - weight of food
 			buzzerWork();
 			break;
 		}
 		else if(strcmp(cur_time, lunch) == 0)// when lunch is comming
 		{
 			puts("lunch buzzer\n");
+			// Before buzzer work, receive the data - weight of food
 			buzzerWork();
 			break;
 		}
 		else if(strcmp(cur_time, dinner) == 0) // when dinner is comming
 		{
 			puts("dinner buzzer\n");
+			// Before buzzer work, receive the data - weight of food
 			buzzerWork();
 			break;
 		}
