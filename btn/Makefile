@@ -19,3 +19,6 @@ clean:
 
 wiringPi:
 	gcc -Wall -o btn_wiring  btn.c -lwiringPi
+
+lcd : 
+	gcc -o lcd btn_lcd.c -lwiringPi -lwiringPiDev
