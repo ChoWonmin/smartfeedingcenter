@@ -47,7 +47,7 @@ int main( int argc, char** argv) {
 		
 		if(strcmp(cur_time, breakfast) == 0) // when breakfast is comming
 		{
-			puts("breakfase buzzer!\n");
+			puts("breakfast buzzer!\n");
 			buzzerWork();
 			break;
 		}
