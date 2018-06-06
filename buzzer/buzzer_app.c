@@ -18,12 +18,13 @@ void buzzer_work();
 void socket_connect(int* server_socket, struct sockaddr_in server_addr);
 void *check_system_time(void* argv);
 
+int status = 0; // flag value that check meal time
+
 int main( int argc, char** argv) {
 
 	char cur_time[CHARMAX]; // current system time
 
 	pthread_t thread; //thread for checking System time
-	int status = 0;
 
 	// for socket communication
 	int client_socket;
@@ -44,7 +45,15 @@ int main( int argc, char** argv) {
 
 	// server connect to client
 	socket_connect(&server_socket, server_addr);
-	
+
+	// thread create
+	if(pthread_create(&thread, NULL, check_system_time, (void*)argv) < 0)
+	{
+		perror("thread creaet error\n");
+		exit(1);
+	}
+	puts("checking System time..");
+
 	// process start
 	while(1)
 	{
@@ -61,24 +70,18 @@ int main( int argc, char** argv) {
 
 		puts("accept success"); // socket connect 
 
-		puts("checking System time..");
-		// thread create
-		if(pthread_create(&thread, NULL, check_system_time, (void*)argv) < 0)
-		{
-			perror("thread creaet error\n");
-			exit(1);
-		}
+		while(1)
+		{ 
+			if(status == 1)
+			{
+				// initaite flag
+				status = 0;
+				break;
+			}
+		} // wait until meal time
+		
 
-		// wait thread until finish
-		pthread_join(thread, (void**)&status);
-
-		if(status != 1)
-		{
-			perror("thread return error\n");
-			exit(1);
-		}
-
-		sleep(10);
+		sleep(5);
 
 		write(client_socket, send_msg, strlen(send_msg) + 1);
 		puts("write success");
@@ -167,20 +170,23 @@ void *check_system_time(void* argv)
 		if(strcmp(cur_time, meal_time[1]) == 0) // when breakfast is comming
 		{
 			puts("breakfast buzzer!");
-			result = 1;
-			return (void*)result;
+			//result = 1;
+			//return (void*)result;
+			status = 1;
 		}
 		else if(strcmp(cur_time, meal_time[2]) == 0)// when lunch is comming
 		{
 			puts("lunch buzzer");
-			result = 1;
-			return (void*)result;
+			//result = 1;
+			//return (void*)result;
+			status = 1;
 		}
 		else if(strcmp(cur_time, meal_time[3]) == 0) // when dinner is comming
 		{
 			puts("dinner buzzer");
-			result = 1;
-			return (void*)result;
+			//result = 1;
+			//return (void*)result;
+			status = 1;
 		}
 	
 		sleep(60);
