@@ -11,23 +11,23 @@
 
 MODULE_LICENSE("GPL");
 static char *msg = "";
-int res = 0; // button 산호의 결과값 1이면 click
+int res = 0;
 
 int btn_open(struct inode *pinode, struct file *pfile){
     
     printk(KERN_ALERT "open btn_dev\n");
     
     gpio_request(GPIO1, "GPIO1");
-    gpio_direction_input(GPIO1); // GPIO1을 input으로 setting
+    gpio_direction_input(GPIO1);
     
     return 0;
 }
 
 ssize_t btn_read(struct file *pfile, char __user *buffer, size_t length, loff_t *offset)
 {
-    res = gpio_get_value(GPIO1); // click이되면 1
+    res = gpio_get_value(GPIO1);
     if(res)
-        copy_to_user(buffer, "click", length); // click이면 app에게 "click"
+        copy_to_user(buffer, "click", length);
     else
         copy_to_user(buffer, "no click", length);
     return 0;
@@ -62,3 +62,5 @@ void __exit btn_exit(void) {
 
 module_init(btn_init);
 module_exit(btn_exit);
+
+
