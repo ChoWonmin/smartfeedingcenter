@@ -75,9 +75,13 @@ int main(void) {
 
 		printf("accept client\n");
 
+		sleep(10);
 		write(client_socket, buff_snd, strlen(buff_snd) + 1);
-
 		puts("write success\n");
+		read(client_socket, buff_rcv, BUFF_SIZE);
+		printf("receive : %s\n", buff_rcv);
+
+		close(client_socket);
 	}
 
 }
