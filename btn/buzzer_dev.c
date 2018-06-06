@@ -43,17 +43,6 @@ ssize_t buzzer_write(struct file *pfile, const char __user *buffer, size_t lengt
 		ssleep(1);
 		gpio_direction_output(GPIO1, 0);
 		ssleep(1);
-		gpio_direction_output(GPIO1, 1);
-		ssleep(1);
-		gpio_direction_output(GPIO1, 0);
-		ssleep(1);
-		gpio_direction_output(GPIO1, 1);
-		ssleep(1);
-		gpio_direction_output(GPIO1, 0);
-		ssleep(1);
-		gpio_direction_output(GPIO1, 1);
-		ssleep(1);
-		gpio_direction_output(GPIO1, 0);
 	}
 
 	return length;
