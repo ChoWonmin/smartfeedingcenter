@@ -1,8 +1,0 @@
-DogFeedingCenter : frs.o main.o
-    gcc -o DogFeedingCenter frs.o main.o -lwiringPi
-frs.o : frs.c
-    gcc -c -o frs.o frs.c -lwiringPi
-main.o : main.o
-    gcc -c -o main.o main.c -lwiringPi
-clean :
-    rm *.o DogFeedingCenter

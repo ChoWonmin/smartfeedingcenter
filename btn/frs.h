@@ -5,7 +5,7 @@
 
 #define FRC_NUM 10
 
-int wiringPiSetup();
+int wiringSetup();
 int adcSetup(int pinBase, int spiNum);
 void readValue(int val_arr[FRC_NUM],int pinBase);
 int fine_median(int *arr,int size);
