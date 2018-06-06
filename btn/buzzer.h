@@ -3,7 +3,7 @@
 
 #define CHARMAX 100
 #define BUFF_SIZE 1024
-#define DEV_PATH "/dev/buzzer_dev"
+#define BUZ_DEV_PATH "/dev/buzzer_dev"
 
 void buzzer_work();
 void *check_system_time(void* argv);

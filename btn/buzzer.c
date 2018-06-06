@@ -18,7 +18,7 @@ void buzzer_work()
 	char message[5] = "buzz";
 
 	// open buzzer device file
-	if((fd = open(DEV_PATH, O_RDWR | O_NONBLOCK)) < 0)
+	if((fd = open(BUZ_DEV_PATH, O_RDWR | O_NONBLOCK)) < 0)
 	{
 		perror("fail to open buzzer device file\n");
 		exit(1);
