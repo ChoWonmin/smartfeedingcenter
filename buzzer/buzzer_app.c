@@ -81,7 +81,7 @@ int main( int argc, char** argv) {
 		} // wait until meal time
 		
 
-		sleep(5);
+		sleep(3);
 
 		write(client_socket, send_msg, strlen(send_msg) + 1);
 		puts("write success");
@@ -172,23 +172,17 @@ void *check_system_time(void* argv)
 		
 		if(strcmp(cur_time, meal_time[1]) == 0) // when breakfast is comming
 		{
-			puts("breakfast buzzer!");
-			//result = 1;
-			//return (void*)result;
+			puts("breakfast time");
 			status = 1;
 		}
 		else if(strcmp(cur_time, meal_time[2]) == 0)// when lunch is comming
 		{
-			puts("lunch buzzer");
-			//result = 1;
-			//return (void*)result;
+			puts("lunch time");
 			status = 1;
 		}
 		else if(strcmp(cur_time, meal_time[3]) == 0) // when dinner is comming
 		{
-			puts("dinner buzzer");
-			//result = 1;
-			//return (void*)result;
+			puts("dinner time");
 			status = 1;
 		}
 	
