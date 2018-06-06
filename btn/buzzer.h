@@ -6,6 +6,5 @@
 #define DEV_PATH "/dev/buzzer_dev"
 
 void buzzer_work();
-void *check_system_time(void* argv);
 
 #endif 

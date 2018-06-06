@@ -1,21 +1,21 @@
 KERNELDIR = /lib/modules/$(shell uname -r)/build
 
-obj-m := btn_dev.o   
+obj-m += btn_dev.o   
+obj-m += buzzer_dev.o   
 
 PWD := $(shell pwd)
 
 default :
 	$(MAKE) -C $(KERNELDIR) M=$(PWD) modules
-cre_file :
+
+btn_dev :
 	sudo mknod -m 666 /dev/btn_dev c 240 0 
+
+buz_dev :
+	sudo mknod -m 666 /dev/buzzer_dev c 230 0 
+
 clean :  
-	find . -type f | xargs touch
-	rm -rf $(OBJS)  
-	rm -rf btn_dev.mod.c
-	rm -rf btn_dev.o   
-	rm -rf btn_dev.mod.o
-	rm -rf Module.symvers
-	rm -rf modules.order
+	rm btn_dev.mod.c buzzer.mod.c *.o Module.symvers modules.order center *.ko
 
 wiringPi:
 	gcc -Wall -o btn_wiring  btn_wiringPi.c -lwiringPi
@@ -24,7 +24,7 @@ lcd :
 	gcc -o lcd_thread btn_thread.c -lwiringPi -lwiringPiDev  -lpthread
 
 dogFeedingCenter : frs.o buzzer.o main.o
-		gcc -o DogFeedingCenter frs.o buzzer.o main.o -lwiringPi -lwiringPiDev -lpthread
+		gcc -o center frs.o buzzer.o main.o -lwiringPi -lwiringPiDev -lpthread
 frs.o : frs.c
 		gcc -c -o frs.o frs.c -lwiringPi
 buzzer.o : buzzer.c
