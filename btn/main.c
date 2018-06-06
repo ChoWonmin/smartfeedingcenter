@@ -40,7 +40,7 @@ typedef struct _todo_arg // structure for arguments of todo thread
 	char* breakfast;
 	char* lunch;
 	char* dinner;
-} tData
+} tData;
 
 // thread function for scanning button
 void *btn_scan(void *data) {
@@ -104,16 +104,20 @@ int main(int argc, char** argv) {
 	pthread_t btn_scan_thread = 0; // button thread
 	pthread_t todo_thread = 0; // thread for controlling all sensors.
 
+	tData data; // data arguments for thread function
+
 	wiringSetup();
 	adcSetup(pinBase, spi_num);
 	int lcd = lcd_init();
 
 	// structure memory allocation
-	tData data = (tData*)malloc(sizeof(tData) * 4);	
 	data.lcd = lcd;
-	data.breakfast = argv[1];
-	data.lunch = argv[2];
-	data.dinner = argv[3];
+	data.breakfast = (char*)malloc(sizeof(char) * 6);
+	strcpy(breakfast, argv[1]);
+	data.lunch = (char*)malloc(sizeof(char) * 6);
+	strcpy(lunch, argv[2]);
+	data.dinner = (char*)malloc(sizeof(char) * 6);
+	strcpy(dinner, argv[3]);
 
 	// thread which scan button create
 	if (pthread_create(&btn_scan_thread, NULL, btn_scan, NULL)< 0) {
