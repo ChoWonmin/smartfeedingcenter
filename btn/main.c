@@ -64,8 +64,16 @@ void *todo_func(void *data) {
 	float weight;
 	char buf[BUFFER_LENGTH];
 
-	buzzer_work();
 	
+	buzzer_work();
+	printf("aaaaa 1\n");
+	buzzer_work();
+	printf("aaaa 2\n");
+	buzzer_work();
+	printf("aaaa 3\n");
+	buzzer_work();
+	printf("aaaaa 4\n");
+
 	while(1){
 	
 		//readValue(frc_val_arr, pinBase);
