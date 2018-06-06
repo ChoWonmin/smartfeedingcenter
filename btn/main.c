@@ -113,11 +113,11 @@ int main(int argc, char** argv) {
 	// structure memory allocation
 	data.lcd = lcd;
 	data.breakfast = (char*)malloc(sizeof(char) * 6);
-	strcpy(breakfast, argv[1]);
+	strcpy(data.breakfast, argv[1]);
 	data.lunch = (char*)malloc(sizeof(char) * 6);
-	strcpy(lunch, argv[2]);
+	strcpy(data.lunch, argv[2]);
 	data.dinner = (char*)malloc(sizeof(char) * 6);
-	strcpy(dinner, argv[3]);
+	strcpy(data.dinner, argv[3]);
 
 	// thread which scan button create
 	if (pthread_create(&btn_scan_thread, NULL, btn_scan, NULL)< 0) {
