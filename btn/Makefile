@@ -8,7 +8,7 @@ default :
 	$(MAKE) -C $(KERNELDIR) M=$(PWD) modules
 cre_file :
 	sudo mknod -m 666 /dev/btn_dev c 240 0     
-clean:  
+clean :  
 	find . -type f | xargs touch
 	rm -rf $(OBJS)  
 	rm -rf btn_dev.mod.c
@@ -18,7 +18,14 @@ clean:
 	rm -rf modules.order
 
 wiringPi:
-	gcc -Wall -o btn_wiring  btn.c -lwiringPi
+	gcc -Wall -o btn_wiring  btn_wiringPi.c -lwiringPi
 
 lcd : 
-	gcc -o lcd btn_lcd.c -lwiringPi -lwiringPiDev
+	gcc -o lcd_thread btn_thread.c -lwiringPi -lwiringPiDev  -lpthread
+
+dogFeedingCenter : frs.o main.o
+		gcc -o DogFeedingCenter frs.o main.o -lwiringPi -lwiringPiDev -lpthread
+frs.o : frs.c
+		gcc -c -o frs.o frs.c -lwiringPi
+main.o : main.c
+		gcc -c -o main.o main.c -lwiringPi -lwiringPiDev -lpthread
