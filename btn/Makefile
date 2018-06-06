@@ -7,7 +7,7 @@ PWD := $(shell pwd)
 default :
 	$(MAKE) -C $(KERNELDIR) M=$(PWD) modules
 cre_file :
-	sudo mknod -m 666 /dev/btn_dev c 240 0     
+	sudo mknod -m 666 /dev/btn_dev c 240 0 
 clean :  
 	find . -type f | xargs touch
 	rm -rf $(OBJS)  
