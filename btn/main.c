@@ -63,7 +63,7 @@ void *btn_scan(void *data) {
 
 		if (strcmp(receive,"click")==0)	on = on?0:1;
 		
-		sleep(1);
+		usleep(500000);
 	}
 
 	close(fd);
@@ -111,6 +111,7 @@ int main(int argc, char** argv) {
 	adcSetup(pinBase, spi_num);
 	int lcd = lcd_init();
 
+
 	// structure memory allocation
 	data.lcd = lcd;
 	data.breakfast = (char*)malloc(sizeof(char) * 6);
@@ -150,7 +151,7 @@ int main(int argc, char** argv) {
 			write_lcd(lcd, "");
 		}
 
-		sleep(1);
+		usleep(30000);
 	}
 
 	//pthread_join(btn_scan_thread, NULL);
