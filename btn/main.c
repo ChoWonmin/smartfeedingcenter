@@ -12,6 +12,7 @@
 #include <mcp3004.h>
 
 #include "frs.h"
+#include "buzzer.h"
 
 #define BUFFER_LENGTH 256
 #define DEV_PATH "/dev/btn_dev"
@@ -77,7 +78,7 @@ void *todo_func(void *data) {
 	}
 }
 
-int main(){
+int main(int argc, char** argv) {
 	pthread_t btn_scan_thread = 0;
 	pthread_t todo_thread = 0;
 
