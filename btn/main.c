@@ -91,10 +91,10 @@ void *todo_func(void *args) {
 
 		gcvt(weight, 5, buf);
 	
-		write_lcd(data.lcd, buf);
+		write_lcd(data->lcd, buf);
 
 		// check system time
-		check_system_time(data.breakfast, data.lunch, data.dinner);
+		check_system_time(data->breakfast, data->lunch, data->dinner);
 
 		sleep(1);
 	}
@@ -138,6 +138,7 @@ int main(int argc, char** argv) {
 					perror("todo thread create error");
 					exit(0);
 				}
+			}	
 		}
 		else { // button off
 			printf("off \n");
