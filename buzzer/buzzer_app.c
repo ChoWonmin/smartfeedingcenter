@@ -89,6 +89,9 @@ int main( int argc, char** argv) {
 		read(client_socket, buff_rcv, BUFF_SIZE);
 		printf("receive : %s\n", buff_rcv);
 
+		// buzzer work
+		buzzer_work();
+
 		close(client_socket);
 	}
 
