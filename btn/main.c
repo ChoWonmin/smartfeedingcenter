@@ -12,9 +12,10 @@
 #include <mcp3004.h>
 
 #include "frs.h"
+#include "buzzer.h"
 
 #define BUFFER_LENGTH 256
-#define DEV_PATH "/dev/btn_dev"
+#define BTN_DEV_PATH "/dev/btn_dev"
 
 #define LCD_RS 27
 #define LCD_E 28
@@ -35,8 +36,8 @@ void *btn_scan(void *data) {
 	int fd = 0;
 	char receive[BUFFER_LENGTH];
 
-	if((fd = open(DEV_PATH, O_RDWR | O_NONBLOCK)) < 0) {
-		perror("open()");
+	if((fd = open(BTN_DEV_PATH, O_RDWR | O_NONBLOCK)) < 0) {
+		perror("btn open()");
         	exit(1);
     	}
 
@@ -63,11 +64,13 @@ void *todo_func(void *data) {
 	float weight;
 	char buf[BUFFER_LENGTH];
 
+	buzzer_work();
+	
 	while(1){
 	
-		readValue(frc_val_arr, pinBase);
-		median = find_median(frc_val_arr, FRC_NUM);
-		weight = getWeight(median);
+		//readValue(frc_val_arr, pinBase);
+		//median = find_median(frc_val_arr, FRC_NUM);
+		weight = getWeight(frc_val_arr,pinBase,FRC_NUM);
 
 		gcvt(weight, 5, buf);
 	
@@ -92,6 +95,7 @@ int main(){
 	    perror("Button scan thread create error");
 	    exit(0);
 	}
+
 	
 	while(1){
 		if (on) {

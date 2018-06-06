@@ -38,7 +38,10 @@ int find_median(int* arr, int size) {
 		return arr[size/2];
 }
 
-float getWeight(int median){
+float getWeight(int* arr, int pinBase, int size){
+
+	readValue(arr,pinBase);
+	int median = find_median(arr,size);
 	float voltage= (float)median/1023*3.3;
 
 	if(0<=voltage&&voltage<1)

@@ -10,6 +10,7 @@
 
 #include "buzzer.h"
 
+int status  = 0;
 // method that buzzer work
 void buzzer_work()
 {

@@ -1,3 +1,3 @@
-/home/pi/project/smartfeedingcenter/buzzer/buzzer_dev.ko
-/home/pi/project/smartfeedingcenter/buzzer/buzzer_dev.o
+/home/pi/workspace/smartfeedingcenter/buzzer/buzzer_dev.ko
+/home/pi/workspace/smartfeedingcenter/buzzer/buzzer_dev.o
 

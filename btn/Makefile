@@ -23,9 +23,11 @@ wiringPi:
 lcd : 
 	gcc -o lcd_thread btn_thread.c -lwiringPi -lwiringPiDev  -lpthread
 
-dogFeedingCenter : frs.o main.o
-		gcc -o DogFeedingCenter frs.o main.o -lwiringPi -lwiringPiDev -lpthread
+dogFeedingCenter : frs.o buzzer.o main.o
+		gcc -o DogFeedingCenter frs.o buzzer.o main.o -lwiringPi -lwiringPiDev -lpthread
 frs.o : frs.c
 		gcc -c -o frs.o frs.c -lwiringPi
+buzzer.o : buzzer.c
+		gcc -c -o buzzer.o buzzer.c
 main.o : main.c
 		gcc -c -o main.o main.c -lwiringPi -lwiringPiDev -lpthread

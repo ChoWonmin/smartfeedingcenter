@@ -6,9 +6,9 @@
 #include <linux/uaccess.h>
 #include <linux/timer.h>
 
-#define GPIO1 18
+#define GPIO1 5
 #define DEV_NAME "buzzer_dev"
-#define DEV_NUM 240
+#define DEV_NUM 230
 
 MODULE_LICENSE("GPL");
 
@@ -30,12 +30,17 @@ ssize_t buzzer_write(struct file *pfile, const char __user *buffer, size_t lengt
 {
 	char msg[5];
 	int err;
+
+
 	// receive message from user program
 	if((err = copy_from_user(msg, buffer, length)) < 0)
 	{
 		printk(KERN_ALERT "failed to write\n");
 		return -1;
 	}
+
+	printk(KERN_ALERT "==== %s \n", msg);
+
 
 	if(strcmp(msg, "buzz") == 0)
 	{

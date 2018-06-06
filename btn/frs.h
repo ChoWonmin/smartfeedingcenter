@@ -9,4 +9,4 @@ int wiringSetup();
 int adcSetup(int pinBase, int spiNum);
 void readValue(int val_arr[FRC_NUM],int pinBase);
 int fine_median(int *arr,int size);
-float getWeight(int median);
+float getWeight(int *arr, int pinBase, int size);

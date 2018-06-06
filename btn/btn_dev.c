@@ -26,10 +26,12 @@ int btn_open(struct inode *pinode, struct file *pfile){
 ssize_t btn_read(struct file *pfile, char __user *buffer, size_t length, loff_t *offset)
 {
     res = gpio_get_value(GPIO1);
-    if(res)
+    
+    if(!res)
         copy_to_user(buffer, "click", length);
     else
         copy_to_user(buffer, "no click", length);
+
     return 0;
 }
 ssize_t btn_write(struct file *pfile, const char __user *buffer, size_t length, loff_t *offset)
