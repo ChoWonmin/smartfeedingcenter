@@ -34,6 +34,7 @@ int status = 0; // flag value for checking meal time
 int lcd_init();
 void write_lcd(int lcd, char* str);
 void check_system_time(char* brfst, char* lnch, char* dnr);
+
 typedef struct _todo_arg // structure for arguments of todo thread
 {
 	int lcd; 

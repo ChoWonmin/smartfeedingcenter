@@ -6,9 +6,9 @@
 #include <linux/uaccess.h>
 #include <linux/timer.h>
 
-#define GPIO1 18
+#define GPIO1 5
 #define DEV_NAME "buzzer_dev"
-#define DEV_NUM 240
+#define DEV_NUM 230
 
 MODULE_LICENSE("GPL");
 
