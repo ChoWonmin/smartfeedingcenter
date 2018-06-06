@@ -28,7 +28,7 @@ void buzzer_work()
 	ret = write(fd, message, (strlen(message) + 1));
 	if(ret < 0)
 	{
-		perror("fail to write \"buzz\" message to the device\n");
+		perror("fail to write \"buzz\" message to the device \n");
 		exit(1);
 	}
 
