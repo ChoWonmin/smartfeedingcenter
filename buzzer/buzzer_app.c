@@ -57,7 +57,7 @@ int main( int argc, char** argv) {
 	// process start
 	while(1)
 	{
-
+		puts("accept ready");
 		client_addr_size = sizeof(client_addr);
 		// accept
 		client_socket = accept(server_socket, 
