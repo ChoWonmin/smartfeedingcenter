@@ -103,7 +103,7 @@ void *todo_func(void *args) {
 void* sock_func(void* sv_sock)
 {
 	int client_addr_size;
-	int server_socket = (int) *sv_sock;
+	int server_socket = *(int*) sv_sock;
 	struct sockaddr_in client_addr;
 	int client_socket;
 	char buff_snd[4] = "get";
@@ -118,7 +118,7 @@ void* sock_func(void* sv_sock)
 				(struct sockaddr*)&client_addr, &client_addr_size);
 		if(client_socket == -1)
 		{
-			perror("fail to accept client\n");
+			printf("fail to accept client  %d  \n", server_socket);
 			exit(1);
 		}
 
@@ -190,14 +190,14 @@ int main(int argc, char** argv) {
 	data.dinner = (char*)malloc(sizeof(char) * 6);
 	strcpy(data.dinner, argv[3]);
 
+	// init socket server and listen
+	socket_connect(&server_socket, server_addr);
+	
 	// thread which scan button create
 	if (pthread_create(&btn_scan_thread, NULL, btn_scan, NULL)< 0) {
 	    perror("Button scan thread create error");
 	    exit(0);
 	}
-
-	// init socket server and listen
-	socket_connect(&server_socket, server_addr);
 
 	// check button on / off	
 	while(1){
@@ -211,7 +211,7 @@ int main(int argc, char** argv) {
 					perror("fail to create todo thread");
 					exit(1);
 				}
-
+				printf("SERVER SOCK %d \n ", server_socket);
 				//create sock thread
 				if((pthread_create(&sock_thread, NULL, sock_func, (void*)&server_socket)) < 0)
 				{
@@ -224,18 +224,14 @@ int main(int argc, char** argv) {
 			printf("off \n");
 			if (todo_thread != 0 || sock_thread != 0) { 
 				// thread all cancel 
-				pthread_cancel(todo_thread);
-				pthread_cancel(sock_thread);
-				todo_thread = 0;
-				sock_thread = 0;
+				todo_thread = pthread_cancel(todo_thread);
+				sock_thread = pthread_cancel(sock_thread);
 			}
 			write_lcd(lcd, "");
 		}
 
 		usleep(30000);
 	}
-
-	//pthread_join(btn_scan_thread, NULL);
 
 	return 0;
 }
@@ -292,6 +288,8 @@ void check_system_time(char* brfst, char* lnch, char* dnr)
 // method that init server sokcet and server listen
 void socket_connect(int* server_socket, struct sockaddr_in server_addr)
 {
+	
+	puts("work");
 	*server_socket = socket(PF_INET, SOCK_STREAM, 0); // create server socket
 	if(*server_socket == -1)
 	{
