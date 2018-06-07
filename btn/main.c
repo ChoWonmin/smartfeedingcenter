@@ -15,6 +15,7 @@
 
 #include "frs.h"
 #include "buzzer.h"
+#include "lcd_module.h"
 
 #define BUFFER_LENGTH 256 // buffer for scanning button
 #define BTN_DEV_PATH "/dev/btn_dev"
@@ -35,8 +36,6 @@ int on = 0; // flag value for checking button on/off
 int status = 0; // flag value for checking meal time
 char buff_rcv[BUFF_SOCK_MAX + 5]; // data from client
 
-int lcd_init();
-void write_lcd(int lcd, char* str);
 void check_system_time(char* brfst, char* lnch, char* dnr);
 void socket_connect(int* server_socket, struct sockaddr_in server_addr);
 
@@ -234,27 +233,6 @@ int main(int argc, char** argv) {
 	}
 
 	return 0;
-}
-
-// initiate lcd
-int lcd_init()
-{	
-	int lcd;
-
-	if(lcd = lcdInit(2, 16, 4, LCD_RS, LCD_E, LCD_D4, LCD_D5, LCD_D6, LCD_D7, 0, 0, 0, 0)){
-		perror("lcd init failed!\n");
-		return -1;
-	}
-	lcdClear(lcd);
-
-	return lcd;
-}
-
-// display value in lcd
-void write_lcd(int lcd, char* str) {
-	lcdClear(lcd);
-	lcdPosition(lcd,0,0);
-	lcdPuts(lcd, str);
 }
 
 // method for checking system time
