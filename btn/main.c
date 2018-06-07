@@ -13,6 +13,7 @@
 
 #include "frs.h"
 #include "buzzer.h"
+#include "lcd_module.h"
 
 #define BUFFER_LENGTH 256
 #define BTN_DEV_PATH "/dev/btn_dev"
@@ -80,7 +81,7 @@ void *todo_func(void *args) {
 	char buf[BUFFER_LENGTH];
 
 	
-	//buzzer_work();
+	buzzer_work();
 	//buzzer_work();
 	//buzzer_work();
 	//buzzer_work();
@@ -110,7 +111,6 @@ int main(int argc, char** argv) {
 	wiringSetup();
 	adcSetup(pinBase, spi_num);
 	int lcd = lcd_init();
-
 
 	// structure memory allocation
 	data.lcd = lcd;
@@ -157,27 +157,6 @@ int main(int argc, char** argv) {
 	//pthread_join(btn_scan_thread, NULL);
 
 	return 0;
-}
-
-// initiate lcd
-int lcd_init()
-{	
-	int lcd;
-
-	if(lcd = lcdInit(2, 16, 4, LCD_RS, LCD_E, LCD_D4, LCD_D5, LCD_D6, LCD_D7, 0, 0, 0, 0)){
-		perror("lcd init failed!\n");
-		return -1;
-	}
-	lcdClear(lcd);
-
-	return lcd;
-}
-
-// display value in lcd
-void write_lcd(int lcd, char* str) {
-	lcdClear(lcd);
-	lcdPosition(lcd,0,0);
-	lcdPuts(lcd, str);
 }
 
 // method for checking system time
