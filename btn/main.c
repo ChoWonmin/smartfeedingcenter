@@ -19,7 +19,7 @@
 #define BUFFER_LENGTH 256 // buffer for scanning button
 #define BTN_DEV_PATH "/dev/btn_dev"
 #define CHARMAX 100
-#define BUFF_SOCk_MAX 1024 // buffer for data through socket communication
+#define BUFF_SOCK_MAX 1024 // buffer for data through socket communication
 
 #define LCD_RS 27
 #define LCD_E 28
@@ -33,6 +33,7 @@
 
 int on = 0; // flag value for checking button on/off
 int status = 0; // flag value for checking meal time
+char buff_rcv[BUFF_SOCK_MAX + 5]; // data from client
 
 int lcd_init();
 void write_lcd(int lcd, char* str);
@@ -99,11 +100,13 @@ void *todo_func(void *args) {
 }
 
 // thread function for connectiong with client through socket 
-void* sock_func()
+void* sock_func(void* sv_sock)
 {
 	int client_addr_size;
+	int server_socket = (int) *sv_sock;
 	struct sockaddr_in client_addr;
 	int client_socket;
+	char buff_snd[4] = "get";
 	
 	while(1)
 	{
@@ -136,7 +139,7 @@ void* sock_func()
 
 		write(client_socket, buff_snd, strlen(buff_snd) + 1);
 		puts("send message to client..");
-		read(client_socket, buff_rcv, BUFF_SOCk_MAX);
+		read(client_socket, buff_rcv, BUFF_SOCK_MAX);
 		printf(" receive : %s\n", buff_rcv);
 
 		// buzzer work three times
@@ -164,8 +167,7 @@ int main(int argc, char** argv) {
 	int server_socket;
 	struct sockaddr_in server_addr;
 
-	char buff_rcv[BUFF_SOCk_MAX + 5];
-	char buff_snd[4] = "get";
+	char buff_rcv[BUFF_SOCK_MAX + 5];
 
 	// check user input 
 	if(argc != 4)
@@ -211,7 +213,7 @@ int main(int argc, char** argv) {
 				}
 
 				//create sock thread
-				if((pthread_create(&sock_thread, NULLm, sock_func, NULL)) < 0)
+				if((pthread_create(&sock_thread, NULL, sock_func, (void*)&server_socket)) < 0)
 				{
 					perror("fail to create sock thread");
 					exit(1);
@@ -219,7 +221,7 @@ int main(int argc, char** argv) {
 			}
 		}
 		else { // button off
-			printf("off \n")
+			printf("off \n");
 			if (todo_thread != 0 || sock_thread != 0) { 
 				// thread all cancel 
 				pthread_cancel(todo_thread);
