@@ -83,6 +83,15 @@ void *todo_func(void *args) {
 	float weight;
 	char buf[BUFFER_LENGTH];
 
+<<<<<<< HEAD
+=======
+	
+	buzzer_work();
+	//buzzer_work();
+	//buzzer_work();
+	//buzzer_work();
+
+>>>>>>> 7cdb4f8da4ab223e84fc2f7743474facb3018078
 	while(1){
 	
 		weight = getWeight(frc_val_arr,pinBase,FRC_NUM);
@@ -178,7 +187,11 @@ int main(int argc, char** argv) {
 	// wiring, adc set up & lcd init
 	wiringSetup();
 	adcSetup(pinBase, spi_num);
+<<<<<<< HEAD
 	lcd = lcd_init();
+=======
+	int lcd = lcd_init();
+>>>>>>> 7cdb4f8da4ab223e84fc2f7743474facb3018078
 
 	// structure memory allocation
 	data.lcd = lcd;

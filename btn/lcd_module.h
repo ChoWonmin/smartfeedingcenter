@@ -1,5 +1,9 @@
 #include <wiringPi.h>
 #include <lcd.h>
+<<<<<<< HEAD
+=======
+#include <stdio.h>
+>>>>>>> 7cdb4f8da4ab223e84fc2f7743474facb3018078
 
 #define LCD_RS 27
 #define LCD_E 28
