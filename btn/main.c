@@ -5,18 +5,21 @@
 #include <string.h>
 #include <unistd.h>
 #include <sys/types.h>
+#include <sys/socket.h>
 #include <linux/kdev_t.h>
 #include <wiringPi.h>
 #include <lcd.h>
 #include <pthread.h>
 #include <mcp3004.h>
+#include <arpa/inet.h>
 
 #include "frs.h"
 #include "buzzer.h"
 
-#define BUFFER_LENGTH 256
+#define BUFFER_LENGTH 256 // buffer for scanning button
 #define BTN_DEV_PATH "/dev/btn_dev"
 #define CHARMAX 100
+#define BUFF_SOCk_MAX 1024 // buffer for data through socket communication
 
 #define LCD_RS 27
 #define LCD_E 28
@@ -34,6 +37,7 @@ int status = 0; // flag value for checking meal time
 int lcd_init();
 void write_lcd(int lcd, char* str);
 void check_system_time(char* brfst, char* lnch, char* dnr);
+void socket_connect(int* server_socket, struct sockaddr_in server_addr)
 
 typedef struct _todo_arg // structure for arguments of todo thread
 {
@@ -79,12 +83,6 @@ void *todo_func(void *args) {
 	float weight;
 	char buf[BUFFER_LENGTH];
 
-	
-	//buzzer_work();
-	//buzzer_work();
-	//buzzer_work();
-	//buzzer_work();
-
 	while(1){
 	
 		weight = getWeight(frc_val_arr,pinBase,FRC_NUM);
@@ -100,17 +98,82 @@ void *todo_func(void *args) {
 	}
 }
 
+// thread function for connectiong with client through socket 
+void* sock_func()
+{
+	while(1)
+	{
+		puts("accept ready ...");
+		client_addr_size = sizeof(client_addr);
+
+		// accept
+		client_socket = accept(server_socket, 
+				(struct sockaddr*)&client_addr, &client_addr_size);
+		if(client_socket == -1)
+		{
+			perror("fail to accept client\n");
+			exit(1);
+		}
+
+		puts("accept success");
+
+		// wait until meal time
+		while(1)
+		{
+			if(status == 1)
+			{
+				// set default flag
+				status = 0;
+				break;
+			}
+		}
+
+		sleep(3);
+
+		write(client_socket, buff_snd, strlen(buff_snd) + 1);
+		puts("send message to client..");
+		read(client_socket, buff_rcv, BUFF_SOCk_MAX);
+		printf(" receive : %s\n", buff_rcv);
+
+		// buzzer work
+		buzzer_work();
+
+		close(client_socket);
+	}
+}
+
+
 int main(int argc, char** argv) {
+
+	int lcd;
 
 	pthread_t btn_scan_thread = 0; // button thread
 	pthread_t todo_thread = 0; // thread for controlling all sensors.
+	pthread_t sock_thread = 0; // thread for socket communication
 
 	tData data; // data arguments for thread function
 
+	// for socket communication
+	int client_socket;
+	int server_socket;
+	int client_addr_size;
+	struct sockaddr_in server_addr;
+	struct sockaddr_in client_addr;
+
+	char buff_rcv[BUFF_SOCk_MAX + 5];
+	char buff_snd[4] = "get";
+
+	// check user input 
+	if(argc != 4)
+	{
+		perror("insufficient input\n");
+		exit(1);
+	}
+
+	// wiring, adc set up & lcd init
 	wiringSetup();
 	adcSetup(pinBase, spi_num);
-	int lcd = lcd_init();
-
+	lcd = lcd_init();
 
 	// structure memory allocation
 	data.lcd = lcd;
@@ -127,19 +190,29 @@ int main(int argc, char** argv) {
 	    exit(0);
 	}
 
+	// init socket server and listen
+	socket_connect(&server_socket, server_addr);
+
 	// check button on / off	
 	while(1){
 
 		// button on 
 		if (on) { 
 			printf("on \n");
-			if (todo_thread == 0) { // todo_thread does not exist 
+			if (todo_thread == 0 || sock_thread == 0) { // todo_thread, sock_thread does not exist 
 				// create todo thread
 				if ( (pthread_create(&todo_thread, NULL, todo_func, (void *)&data)) < 0) {
-					perror("todo thread create error");
-					exit(0);
+					perror("fail to create todo thread");
+					exit(1);
 				}
-			}	
+
+				//create sock thread
+				if((pthread_create(&sock_thread, NULLm, sock_func, NULL)) < 0)
+				{
+					perror("fail to create sock thread");
+					exit(1);
+				}
+			}
 		}
 		else { // button off
 			printf("off \n");
@@ -206,4 +279,37 @@ void check_system_time(char* brfst, char* lnch, char* dnr)
 		puts("dinner time");
 		status = 1;
 	}
+}
+
+// method that init server sokcet and server listen
+void socket_connect(int* server_socket, struct sockaddr_in server_addr)
+{
+	*server_socket = socket(PF_INET, SOCK_STREAM, 0); // create server socket
+	if(*server_socket == -1)
+	{
+		perror("fail to create server\n");
+		exit(1);
+	}
+
+	// initiate server setting
+	memset(&server_addr, 0, sizeof(server_addr));
+	server_addr.sin_family = AF_INET;
+	server_addr.sin_port = htons(4000);
+	server_addr.sin_addr.s_addr = htonl(INADDR_ANY);
+
+	//binding
+	if(bind(*server_socket, (struct sockaddr*)&server_addr, sizeof(server_addr)) == -1)
+	{
+		perror("bind error\n");
+		exit(1);
+	}
+
+	// listen
+	if(listen(*server_socket, 5) == -1)
+	{
+		perror("fail to listen\n");
+		exit(1);
+	}
+
+	puts("listening ...");
 }
