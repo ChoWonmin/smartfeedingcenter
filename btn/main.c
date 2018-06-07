@@ -37,7 +37,7 @@ int status = 0; // flag value for checking meal time
 int lcd_init();
 void write_lcd(int lcd, char* str);
 void check_system_time(char* brfst, char* lnch, char* dnr);
-void socket_connect(int* server_socket, struct sockaddr_in server_addr)
+void socket_connect(int* server_socket, struct sockaddr_in server_addr);
 
 typedef struct _todo_arg // structure for arguments of todo thread
 {
@@ -101,6 +101,10 @@ void *todo_func(void *args) {
 // thread function for connectiong with client through socket 
 void* sock_func()
 {
+	int client_addr_size;
+	struct sockaddr_in client_addr;
+	int client_socket;
+	
 	while(1)
 	{
 		puts("accept ready ...");
@@ -135,8 +139,11 @@ void* sock_func()
 		read(client_socket, buff_rcv, BUFF_SOCk_MAX);
 		printf(" receive : %s\n", buff_rcv);
 
-		// buzzer work
-		buzzer_work();
+		// buzzer work three times
+		for(int i = 0; i < 3; i++)
+		{
+			buzzer_work();
+		}
 
 		close(client_socket);
 	}
@@ -154,11 +161,8 @@ int main(int argc, char** argv) {
 	tData data; // data arguments for thread function
 
 	// for socket communication
-	int client_socket;
 	int server_socket;
-	int client_addr_size;
 	struct sockaddr_in server_addr;
-	struct sockaddr_in client_addr;
 
 	char buff_rcv[BUFF_SOCk_MAX + 5];
 	char buff_snd[4] = "get";
@@ -215,11 +219,13 @@ int main(int argc, char** argv) {
 			}
 		}
 		else { // button off
-			printf("off \n");
-			if (todo_thread != 0) { 
+			printf("off \n")
+			if (todo_thread != 0 || sock_thread != 0) { 
 				// thread all cancel 
 				pthread_cancel(todo_thread);
+				pthread_cancel(sock_thread);
 				todo_thread = 0;
+				sock_thread = 0;
 			}
 			write_lcd(lcd, "");
 		}
