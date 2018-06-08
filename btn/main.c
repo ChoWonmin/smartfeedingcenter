@@ -86,18 +86,24 @@ void *todo_func(void *args) {
 	while(1){
 	
 		weight = getWeight(frc_val_arr,pinBase,FRC_NUM);
+		weight = (1.0>weight)?0:weight;
 
 		gcvt(weight, 5, buf);
 	
 		write_lcd(data->lcd, buf);
 
-		// check system time
-		check_system_time(data->breakfast, data->lunch, data->dinner);
 
 		sleep(1);
 	}
 }
-
+void* time_check(void* args) {
+	printf("time check thread\n");
+	tData* data = (tData *)args;	
+	
+	// check system time
+	check_system_time(data->breakfast, data->lunch, data->dinner);
+	sleep(60);
+}
 // thread function for connectiong with client through socket 
 void* sock_func(void* sv_sock)
 {
@@ -155,7 +161,8 @@ void* sock_func(void* sv_sock)
 int main(int argc, char** argv) {
 
 	int lcd;
-
+	
+	pthread_t time_check_thread = 0; // thread for check time
 	pthread_t btn_scan_thread = 0; // button thread
 	pthread_t todo_thread = 0; // thread for controlling all sensors.
 	pthread_t sock_thread = 0; // thread for socket communication
@@ -198,6 +205,12 @@ int main(int argc, char** argv) {
 	    exit(0);
 	}
 
+	// thread which check time create
+	if ((pthread_create(&time_check_thread, NULL, time_check, (void *)&data))< 0) {
+	    perror("Time check thread create error");
+	    exit(0);
+	}
+
 	// check button on / off	
 	while(1){
 
@@ -209,7 +222,8 @@ int main(int argc, char** argv) {
 					perror("fail to create todo thread");
 					exit(1);
 				}
-				printf("SERVER SOCK %d \n ", server_socket);
+				printf("on \n ");
+				
 				//create sock thread
 				if((pthread_create(&sock_thread, NULL, sock_func, (void*)&server_socket)) < 0)
 				{
@@ -219,6 +233,7 @@ int main(int argc, char** argv) {
 			}
 		}
 		else { // button off
+			printf("off \n");
 			if (todo_thread != 0 || sock_thread != 0) { 
 				// thread all cancel 
 				todo_thread = pthread_cancel(todo_thread);
@@ -240,6 +255,8 @@ void check_system_time(char* brfst, char* lnch, char* dnr)
 	char cur_time[CHARMAX];
 	struct tm tm = *localtime(&t);
 	sprintf(cur_time, "%d%c%d", tm.tm_hour, ':', tm.tm_min);
+	
+	printf("%s %s %s",brfst,lnch,dnr);
 
 	printf("current time: %s\n", cur_time);
 		
@@ -265,7 +282,6 @@ void check_system_time(char* brfst, char* lnch, char* dnr)
 void socket_connect(int* server_socket, struct sockaddr_in server_addr)
 {
 	
-	puts("work");
 	*server_socket = socket(PF_INET, SOCK_STREAM, 0); // create server socket
 	if(*server_socket == -1)
 	{
