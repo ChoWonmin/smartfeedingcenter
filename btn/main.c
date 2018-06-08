@@ -32,10 +32,12 @@
 #define pinBase 300
 #define spi_num 0
 #define DEFAULT_MSG "Help yourself :)"
+#define RENEW_MSG "renew"
 
 int on = 0; // flag value for checking button on/off
 int status = 0; // flag value for checking meal time
 char buff_rcv[BUFF_SOCK_MAX + 5]; // data from client
+int client_socket;
 
 void check_system_time(char* brfst, char* lnch, char* dnr);
 void socket_connect(int* server_socket, struct sockaddr_in server_addr);
@@ -112,7 +114,6 @@ void* sock_func(void* sv_sock)
 	int client_addr_size;
 	int server_socket = *(int*) sv_sock;
 	struct sockaddr_in client_addr;
-	int client_socket;
 	char buff_snd[4] = "get";
 	
 	while(1)
@@ -136,8 +137,6 @@ void* sock_func(void* sv_sock)
 		{
 			if(status == 1)
 			{
-				// set default flag
-				status = 0;
 				break;
 			}
 		}
@@ -154,6 +153,9 @@ void* sock_func(void* sv_sock)
 		}
 
 		close(client_socket);
+
+		// set default flag
+		status = 0;
 	}
 }
 
@@ -231,6 +233,8 @@ int main(int argc, char** argv) {
 			if (todo_thread != 0 || sock_thread != 0) { 
 				// thread all cancel 
 				todo_thread = pthread_cancel(todo_thread);
+
+				write(client_socket, RENEW_MSG, strlen(RENEW_MSG) + 1);
 				sock_thread = pthread_cancel(sock_thread);
 			}
 			write_lcd(lcd, "");
