@@ -31,6 +31,7 @@
 
 #define pinBase 300
 #define spi_num 0
+#define DEFAULT_MSG "Help yourself :)"
 
 int on = 0; // flag value for checking button on/off
 int status = 0; // flag value for checking meal time
@@ -74,35 +75,34 @@ void *btn_scan(void *data) {
 }
 
 // thread function for controlling all sensors.
-void *todo_func(void *args) {
-
+void *todo_func(void *args) {	
 	tData* data = (tData *)args;	
-
+	
 	int frc_val_arr[FRC_NUM];
-	int median;	
-	float weight;
+	float weight = 0;
+	float receive_weight = 0;
 	char buf[BUFFER_LENGTH];
-
-	while(1){
 	
+	write_lcd(data->lcd, DEFAULT_MSG);
+	
+	while(1) {
+		// check system time
+		check_system_time(data->breakfast, data->lunch, data->dinner);
+
 		weight = getWeight(frc_val_arr,pinBase,FRC_NUM);
-		weight = (1.0>weight)?0:weight;
+		receive_weight = atof(buff_rcv);
 
-		gcvt(weight, 5, buf);
-	
+		float final_weight = receive_weight - weight;
+
+		final_weight = (1.0 > final_weight) ? 0 : final_weight;
+		gcvt(final_weight, 5, buf);
+		
 		write_lcd(data->lcd, buf);
 
-
-		sleep(1);
+		sleep(60);
+		write_lcd(data->lcd, DEFAULT_MSG);
+		
 	}
-}
-void* time_check(void* args) {
-	printf("time check thread\n");
-	tData* data = (tData *)args;	
-	
-	// check system time
-	check_system_time(data->breakfast, data->lunch, data->dinner);
-	sleep(60);
 }
 // thread function for connectiong with client through socket 
 void* sock_func(void* sv_sock)
@@ -139,8 +139,6 @@ void* sock_func(void* sv_sock)
 				break;
 			}
 		}
-
-		sleep(3);
 
 		write(client_socket, buff_snd, strlen(buff_snd) + 1);
 		puts("send message to client..");
@@ -202,12 +200,6 @@ int main(int argc, char** argv) {
 	// thread which scan button create
 	if (pthread_create(&btn_scan_thread, NULL, btn_scan, NULL)< 0) {
 	    perror("Button scan thread create error");
-	    exit(0);
-	}
-
-	// thread which check time create
-	if ((pthread_create(&time_check_thread, NULL, time_check, (void *)&data))< 0) {
-	    perror("Time check thread create error");
 	    exit(0);
 	}
 
@@ -283,6 +275,11 @@ void socket_connect(int* server_socket, struct sockaddr_in server_addr)
 {
 	
 	*server_socket = socket(PF_INET, SOCK_STREAM, 0); // create server socket
+	
+	int option;
+	option = 1;
+	setsockopt(*server_socket, SOL_SOCKET, SO_REUSEADDR, &option, sizeof(option));
+
 	if(*server_socket == -1)
 	{
 		perror("fail to create server\n");
