@@ -99,7 +99,8 @@ void *todo_func(void *args) {
 
 			final_weight = (1.0 > final_weight) ? 0 : final_weight;
 			gcvt(final_weight, 5, buf);
-		
+			strcat(buf, "g");
+
 			write_lcd(data->lcd, buf);
 		}
 		else	// if notn meal time, print default mesege
