@@ -88,20 +88,22 @@ void *todo_func(void *args) {
 	while(1) {
 		// check system time
 		check_system_time(data->breakfast, data->lunch, data->dinner);
-
-		weight = getWeight(frc_val_arr,pinBase,FRC_NUM);
-		receive_weight = atof(buff_rcv);
-
-		float final_weight = receive_weight - weight;
-
-		final_weight = (1.0 > final_weight) ? 0 : final_weight;
-		gcvt(final_weight, 5, buf);
 		
-		write_lcd(data->lcd, buf);
+		if (status) { // if meal time, print output
+			weight = getWeight(frc_val_arr,pinBase,FRC_NUM);
+			receive_weight = atof(buff_rcv);
+
+			float final_weight = receive_weight - weight/15;
+
+			final_weight = (1.0 > final_weight) ? 0 : final_weight;
+			gcvt(final_weight, 5, buf);
+		
+			write_lcd(data->lcd, buf);
+		}
+		else	// if notn meal time, print default mesege
+			write_lcd(data->lcd, DEFAULT_MSG);
 
 		sleep(60);
-		write_lcd(data->lcd, DEFAULT_MSG);
-		
 	}
 }
 // thread function for connectiong with client through socket 
