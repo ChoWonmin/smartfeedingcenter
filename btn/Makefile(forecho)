@@ -1,0 +1,8 @@
+Echo: echoM.o echo_main.o
+  gcc - o Echo echoM.o echo_main.o –lwiringPi
+	echoM.o : echoM.c
+	gcc - c - o echoM.o echoM.c - lwiringPi
+	echo_main.o : echo_main.c
+	gcc - c - o echo_main.o echo_main.c - lwiringPi
+clean :
+	  rm *.o Echo
